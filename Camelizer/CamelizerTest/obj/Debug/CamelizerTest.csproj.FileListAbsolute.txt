@@ -1,7 +1,0 @@
-c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\CamelizerTest\bin\Debug\CamelizerTest.dll
-c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\CamelizerTest\bin\Debug\CamelizerTest.pdb
-c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\CamelizerTest\bin\Debug\Camelizer.dll
-c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\CamelizerTest\bin\Debug\Camelizer.pdb
-c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\CamelizerTest\obj\Debug\CamelizerTest.csprojResolveAssemblyReference.cache
-c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\CamelizerTest\obj\Debug\CamelizerTest.dll
-c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\CamelizerTest\obj\Debug\CamelizerTest.pdb
