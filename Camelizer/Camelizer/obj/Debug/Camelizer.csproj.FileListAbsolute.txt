@@ -1,0 +1,5 @@
+c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\Camelizer\bin\Debug\Camelizer.dll
+c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\Camelizer\bin\Debug\Camelizer.pdb
+c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\Camelizer\obj\Debug\Camelizer.csprojResolveAssemblyReference.cache
+c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\Camelizer\obj\Debug\Camelizer.dll
+c:\users\jeff\documents\visual studio 2013\Projects\Camelizer\Camelizer\obj\Debug\Camelizer.pdb

@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camelizer", "Camelizer\Camelizer.csproj", "{B0D5886B-DC12-4784-8630-98F1AF40294D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CamelizerTest", "CamelizerTest\CamelizerTest.csproj", "{DB92B481-5C0C-4A36-9D84-2D3BBC201E73}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0D5886B-DC12-4784-8630-98F1AF40294D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0D5886B-DC12-4784-8630-98F1AF40294D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0D5886B-DC12-4784-8630-98F1AF40294D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0D5886B-DC12-4784-8630-98F1AF40294D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB92B481-5C0C-4A36-9D84-2D3BBC201E73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB92B481-5C0C-4A36-9D84-2D3BBC201E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB92B481-5C0C-4A36-9D84-2D3BBC201E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB92B481-5C0C-4A36-9D84-2D3BBC201E73}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
