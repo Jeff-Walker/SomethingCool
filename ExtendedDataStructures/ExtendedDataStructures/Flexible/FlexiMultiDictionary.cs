@@ -6,16 +6,34 @@ namespace ExtendedDataStructures.Flexible {
 // ReSharper disable once PossibleInterfaceMemberAmbiguity
     public interface IFlexiMultiDictionary<TK, TV, TC> : IDictionary<TK, TC>, ILookup<TK, TV> where TC : IEnumerable<TV> {
         void Add(TK key, TV value);
+        void Add(TK key, params TV[] values);
+        void Add(TK key, IEnumerable<TV> values);
     }
-
+    // IDictionary.Add(TV, TC) will overwrite whole list
     public abstract class FlexiMultiDictionary<TK, TV, TC> : IFlexiMultiDictionary<TK, TV, TC> where TC : ICollection<TV> {
         private readonly IDictionary<TK, TC> _backingDictionary = new Dictionary<TK, TC>();
 
         protected abstract TC ProvideNewCollection();
 
+        protected virtual void BulkAdd(TC valueCollection, IEnumerable<TV> toAdd) {
+            foreach (var v in toAdd) {
+                valueCollection.Add(v);
+            }
+        }
+
         public void Add(TK key, TV value) {
             var valueCollection = GetValueCollection(key);
             valueCollection.Add(value);
+        }
+
+        public void Add(TK key, params TV[] values) {
+            var valueCollection = GetValueCollection(key);
+            BulkAdd(valueCollection, values);
+        }
+
+        public void Add(TK key, IEnumerable<TV> values) {
+            var valueCollection = GetValueCollection(key);
+            BulkAdd(valueCollection, values);
         }
 
         protected TC GetValueCollection(TK key) {
