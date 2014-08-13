@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +9,7 @@ namespace ExtendedDataStructures.Flexible {
         void Add(TK key, TV value);
         void Add(TK key, params TV[] values);
         void Add(TK key, IEnumerable<TV> values);
+        bool Contains(TK key, TV value);
     }
     // IDictionary.Add(TV, TC) will overwrite whole list
     public abstract class FlexiMultiDictionary<TK, TV, TC> : IFlexiMultiDictionary<TK, TV, TC> where TC : ICollection<TV> {
@@ -15,10 +17,19 @@ namespace ExtendedDataStructures.Flexible {
 
         protected abstract TC ProvideNewCollection();
 
+        // reference implementation. Override if your ICollection choice does this better
         protected virtual void BulkAdd(TC valueCollection, IEnumerable<TV> toAdd) {
             foreach (var v in toAdd) {
                 valueCollection.Add(v);
             }
+        }
+
+        public virtual bool Contains(TK key, TV value) {
+            if (_backingDictionary.ContainsKey(key)) {
+                var valueCollection = GetValueCollection(key);
+                return valueCollection.Contains(value);
+            }
+            return false;
         }
 
         public void Add(TK key, TV value) {
@@ -27,11 +38,22 @@ namespace ExtendedDataStructures.Flexible {
         }
 
         public void Add(TK key, params TV[] values) {
+            if (values == null) {
+                throw new ArgumentNullException("values","collection can't be null");
+            }
             var valueCollection = GetValueCollection(key);
             BulkAdd(valueCollection, values);
         }
 
         public void Add(TK key, IEnumerable<TV> values) {
+            if (values == null) {
+                throw new ArgumentNullException("values", "collection can't be null");
+            }
+            var valueCollection = GetValueCollection(key);
+            BulkAdd(valueCollection, values);
+        }
+
+        void IDictionary<TK, TC>.Add(TK key, TC values) {
             var valueCollection = GetValueCollection(key);
             BulkAdd(valueCollection, values);
         }
@@ -86,9 +108,7 @@ namespace ExtendedDataStructures.Flexible {
             return _backingDictionary.Remove(key);
         }
 
-        public void Add(TK key, TC value) {
-            _backingDictionary.Add(key, value);
-        }
+      
 
         public bool ContainsKey(TK key) {
             return _backingDictionary.ContainsKey(key);
