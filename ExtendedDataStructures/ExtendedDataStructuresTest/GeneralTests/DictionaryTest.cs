@@ -4,15 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using ExtendedDataStructures.Flexible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RandomStringGenerator;
 
 // ReSharper disable InconsistentNaming
 namespace ExtendedDataStructuresTest.MultiListDict {
     [TestClass]
     public class MultiListDictionary_IDictionary_Test {
-        readonly StringGenerator _stringGenerator = new StringGenerator();
         private IList<string> _testStrings;
-        private const int StringLength = 10;
         private const int StringCount = 10;
 
         [TestInitialize]
@@ -20,7 +17,6 @@ namespace ExtendedDataStructuresTest.MultiListDict {
             _testStrings = new List<string>(StringCount);
             var random = new Random();
             for (var i = 0 ; i < StringCount ; i++) {
-                //                _testStrings.Add(_stringGenerator.GenerateString(StringLength));
                 _testStrings.Add("" + random.Next());
             }
         }

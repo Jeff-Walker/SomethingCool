@@ -11,7 +11,7 @@ namespace ExtendedDataStructures.Flexible {
         void Add(TK key, IEnumerable<TV> values);
         bool Contains(TK key, TV value);
     }
-    // IDictionary.Add(TV, TC) will overwrite whole list
+
     public abstract class FlexiMultiDictionary<TK, TV, TC> : IFlexiMultiDictionary<TK, TV, TC> where TC : ICollection<TV> {
         private readonly IDictionary<TK, TC> _backingDictionary = new Dictionary<TK, TC>();
 

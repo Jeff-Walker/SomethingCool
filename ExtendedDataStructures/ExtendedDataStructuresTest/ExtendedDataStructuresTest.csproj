@@ -35,9 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RandomStringGenerator">
-      <HintPath>..\packages\RandomStringGenerator4DotNet.1.0.0\lib\RandomStringGenerator.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -53,12 +50,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="MultiListDict\SpecificTests.cs" />
-    <Compile Include="MultiListDict\DictionaryTest.cs" />
+    <Compile Include="EnumerableAssert.cs" />
+    <Compile Include="GeneralTests\GeneralTests.cs" />
+    <Compile Include="GeneralTests\DictionaryTest.cs" />
+    <Compile Include="MultiSetDict\MultiSetDictionaryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExtendedDataStructures\ExtendedDataStructures.csproj">
@@ -66,7 +62,9 @@
       <Name>ExtendedDataStructures</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="MultiListDict\MultiListDictionaryTests.cs" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
