@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using ExtendedDataStructures.Flexible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,7 +23,7 @@ namespace ExtendedDataStructuresTest.MultiSetDict {
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(value1, result.Single());
-//            CollectionAssert.AreEquivalent(new[]{value1}, (ICollection)result);
+            CollectionAssert.AreEquivalent(new[] { value1 }, result.ToList());
         }
 
         [TestMethod]
@@ -36,7 +38,7 @@ namespace ExtendedDataStructuresTest.MultiSetDict {
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(value1, result.Single());
-//            CollectionAssert.AreEquivalent(new[]{value1}, (ICollection)result);
+            CollectionAssert.AreEquivalent(new[] { value1 }, result.ToList());
         }
     }
 }

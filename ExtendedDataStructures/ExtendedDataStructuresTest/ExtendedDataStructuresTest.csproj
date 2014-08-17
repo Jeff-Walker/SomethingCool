@@ -51,8 +51,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="EnumerableAssert.cs" />
-    <Compile Include="GeneralTests\GeneralTests.cs" />
-    <Compile Include="GeneralTests\DictionaryTest.cs" />
+    <Compile Include="MultiListDict\DictionaryTest.cs" />
+    <Compile Include="MultiListDict\GeneralTests.cs" />
+    <Compile Include="MultiSetDict\GeneralTests.cs" />
+    <Compile Include="MultiSetDict\DictionaryTest.cs" />
     <Compile Include="MultiSetDict\MultiSetDictionaryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -64,6 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MultiListDict\MultiListDictionaryTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GeneralTests\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
