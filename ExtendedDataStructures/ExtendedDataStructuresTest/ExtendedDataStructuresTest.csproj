@@ -50,7 +50,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="EnumerableAssert.cs" />
     <Compile Include="MultiListDict\DictionaryTest.cs" />
     <Compile Include="MultiListDict\GeneralTests.cs" />
     <Compile Include="MultiSetDict\GeneralTests.cs" />
