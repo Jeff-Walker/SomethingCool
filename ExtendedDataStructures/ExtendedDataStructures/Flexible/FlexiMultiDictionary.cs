@@ -5,26 +5,32 @@ using System.Linq;
 
 namespace ExtendedDataStructures.Flexible {
 // ReSharper disable once PossibleInterfaceMemberAmbiguity
-    public interface IFlexiMultiDictionary<TK, TV, TC> : IDictionary<TK, TC>, ILookup<TK, TV> where TC : IEnumerable<TV> {
-        void Add(TK key, TV value);
-        void Add(TK key, params TV[] values);
-        void Add(TK key, IEnumerable<TV> values);
-        bool Contains(TK key, TV value);
+    public interface IFlexiMultiDictionary<TKey, TValue, TCollection> 
+            : IDictionary<TKey, TCollection>, ILookup<TKey, TValue>
+            where TCollection : IEnumerable<TValue>
+    {
+        void Add(TKey key, TValue value);
+        void Add(TKey key, params TValue[] values);
+        void Add(TKey key, IEnumerable<TValue> values);
+        bool Contains(TKey key, TValue value);
     }
 
-    public abstract class FlexiMultiDictionary<TK, TV, TC> : IFlexiMultiDictionary<TK, TV, TC> where TC : ICollection<TV> {
-        private readonly IDictionary<TK, TC> _backingDictionary = new Dictionary<TK, TC>();
+    public abstract class FlexiMultiDictionary<TKey, TValue, TCollection>
+            : IFlexiMultiDictionary<TKey, TValue, TCollection>
+            where TCollection : ICollection<TValue>
+    {
+        private readonly IDictionary<TKey, TCollection> _backingDictionary = new Dictionary<TKey, TCollection>();
 
-        protected abstract TC ProvideNewCollection();
+        protected abstract TCollection ProvideNewCollection();
 
         // reference implementation. Override if your ICollection choice does this better
-        protected virtual void BulkAdd(TC valueCollection, IEnumerable<TV> toAdd) {
+        protected virtual void BulkAdd(TCollection valueCollection, IEnumerable<TValue> toAdd) {
             foreach (var v in toAdd) {
                 valueCollection.Add(v);
             }
         }
 
-        public virtual bool Contains(TK key, TV value) {
+        public virtual bool Contains(TKey key, TValue value) {
             if (_backingDictionary.ContainsKey(key)) {
                 var valueCollection = GetValueCollection(key);
                 return valueCollection.Contains(value);
@@ -32,12 +38,12 @@ namespace ExtendedDataStructures.Flexible {
             return false;
         }
 
-        public void Add(TK key, TV value) {
+        public void Add(TKey key, TValue value) {
             var valueCollection = GetValueCollection(key);
             valueCollection.Add(value);
         }
 
-        public void Add(TK key, params TV[] values) {
+        public void Add(TKey key, params TValue[] values) {
             if (values == null) {
                 throw new ArgumentNullException("values","collection can't be null");
             }
@@ -45,7 +51,7 @@ namespace ExtendedDataStructures.Flexible {
             BulkAdd(valueCollection, values);
         }
 
-        public void Add(TK key, IEnumerable<TV> values) {
+        public void Add(TKey key, IEnumerable<TValue> values) {
             if (values == null) {
                 throw new ArgumentNullException("values", "collection can't be null");
             }
@@ -53,13 +59,13 @@ namespace ExtendedDataStructures.Flexible {
             BulkAdd(valueCollection, values);
         }
 
-        void IDictionary<TK, TC>.Add(TK key, TC values) {
+        void IDictionary<TKey, TCollection>.Add(TKey key, TCollection values) {
             var valueCollection = GetValueCollection(key);
             BulkAdd(valueCollection, values);
         }
 
-        protected TC GetValueCollection(TK key) {
-            TC collection;
+        protected TCollection GetValueCollection(TKey key) {
+            TCollection collection;
             if (!_backingDictionary.TryGetValue(key, out collection)) {
                 collection = ProvideNewCollection();
                 _backingDictionary.Add(key, collection);
@@ -69,16 +75,16 @@ namespace ExtendedDataStructures.Flexible {
 
         // ILookup
 
-        IEnumerator<IGrouping<TK, TV>> IEnumerable<IGrouping<TK, TV>>.GetEnumerator() {
-            IEnumerable<KeyValuePair<TK, TC>> asIEnumerable = _backingDictionary;
-            return asIEnumerable.Select(x => new KeyValuePairGrouping<TK, TV, TC>(x)).GetEnumerator();
+        IEnumerator<IGrouping<TKey, TValue>> IEnumerable<IGrouping<TKey, TValue>>.GetEnumerator() {
+            IEnumerable<KeyValuePair<TKey, TCollection>> asIEnumerable = _backingDictionary;
+            return asIEnumerable.Select(x => new KeyValuePairGrouping<TKey, TValue, TCollection>(x)).GetEnumerator();
         }
 
-        bool ILookup<TK, TV>.Contains(TK key) {
+        bool ILookup<TKey, TValue>.Contains(TKey key) {
             return _backingDictionary.ContainsKey(key);
         }
 
-        IEnumerable<TV> ILookup<TK, TV>.this[TK key] {
+        IEnumerable<TValue> ILookup<TKey, TValue>.this[TKey key] {
             get { return _backingDictionary[key]; }
         }
 
@@ -87,30 +93,30 @@ namespace ExtendedDataStructures.Flexible {
             return GetEnumerator();
         }
 
-        public ICollection<TC> Values {
+        public ICollection<TCollection> Values {
             get { return _backingDictionary.Values; }
         }
 
-        public ICollection<TK> Keys {
+        public ICollection<TKey> Keys {
             get { return _backingDictionary.Keys; }
         }
 
-        public TC this[TK key] {
+        public TCollection this[TKey key] {
             get { return _backingDictionary[key]; }
             set { _backingDictionary[key] = value; }
         }
 
-        public bool TryGetValue(TK key, out TC value) {
+        public bool TryGetValue(TKey key, out TCollection value) {
             return _backingDictionary.TryGetValue(key, out value);
         }
 
-        public bool Remove(TK key) {
+        public bool Remove(TKey key) {
             return _backingDictionary.Remove(key);
         }
 
       
 
-        public bool ContainsKey(TK key) {
+        public bool ContainsKey(TKey key) {
             return _backingDictionary.ContainsKey(key);
         }
 
@@ -122,15 +128,15 @@ namespace ExtendedDataStructures.Flexible {
             get { return _backingDictionary.Count; }
         }
 
-        public bool Remove(KeyValuePair<TK, TC> item) {
+        public bool Remove(KeyValuePair<TKey, TCollection> item) {
             return _backingDictionary.Remove(item);
         }
 
-        public void CopyTo(KeyValuePair<TK, TC>[] array, int arrayIndex) {
+        public void CopyTo(KeyValuePair<TKey, TCollection>[] array, int arrayIndex) {
             _backingDictionary.CopyTo(array, arrayIndex);
         }
 
-        public bool Contains(KeyValuePair<TK, TC> item) {
+        public bool Contains(KeyValuePair<TKey, TCollection> item) {
             return _backingDictionary.Contains(item);
         }
 
@@ -138,11 +144,11 @@ namespace ExtendedDataStructures.Flexible {
             _backingDictionary.Clear();
         }
 
-        public void Add(KeyValuePair<TK, TC> item) {
+        public void Add(KeyValuePair<TKey, TCollection> item) {
             _backingDictionary.Add(item);
         }
 
-        public IEnumerator<KeyValuePair<TK, TC>> GetEnumerator() {
+        public IEnumerator<KeyValuePair<TKey, TCollection>> GetEnumerator() {
             return _backingDictionary.GetEnumerator();
         }
     }
