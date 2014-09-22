@@ -5,38 +5,47 @@ using System.Linq.Expressions;
 using ExtendedDataStructures.Forwarding;
 
 namespace ExtendedDataStructures.BiDictionary {
-    public class BiDictionary<TK,TV> : IBiDictionary<TK,TV> {
-        private IDictionary<TK, TV> _forward;
-//        private IDictionary<TV, TK> _inverse;
-        public IBiDictionary<TV, TK> Inverse() {
-            throw new System.NotImplementedException();
+    public class BiDictionary<TK, TV> : AbstractBiDict<TK, TV> {
+        private IBiDictionary<TV, TK> _inverse;
+
+        public BiDictionary() : base(new Dictionary<TK, TV>(), new Dictionary<TV, TK>()) {}
+        public BiDictionary(int capacity)
+            : base(new Dictionary<TK, TV>(capacity), new Dictionary<TV, TK>(capacity)) { }
+        public BiDictionary(IEqualityComparer<TK> kComparer, IEqualityComparer<TV> vComparer)
+            : base(new Dictionary<TK, TV>(kComparer), new Dictionary<TV, TK>(vComparer)) { }
+        public BiDictionary(int capacity, IEqualityComparer<TK> kComparer, IEqualityComparer<TV> vComparer)
+            : base(new Dictionary<TK, TV>(capacity, kComparer), new Dictionary<TV, TK>(capacity, vComparer)) { }
+        public BiDictionary(IDictionary<TK, TV> forward, IDictionary<TV, TK> backward)
+            : base(forward, backward) {}
+
+        public override IBiDictionary<TV, TK> Inverse {
+            get { return _inverse ?? (_inverse = new BiDictionary<TV, TK>(Backward, Forward) {Inverse = this}); }
+            protected set { _inverse = value; }
+        }
+    }
+
+    public abstract class AbstractBiDict<TK, TV> : IBiDictionary<TK, TV> {
+        protected readonly IDictionary<TK, TV> Forward;
+        protected readonly IDictionary<TV, TK> Backward;
+        private const string ValueAlreadyMappedMessage = "Value is already mapped to a different key.";
+
+        public abstract IBiDictionary<TV, TK> Inverse { get; protected set; }
+
+        protected AbstractBiDict(IDictionary<TK, TV> forward, IDictionary<TV,TK> backward ) {
+            Forward = forward;
+            Backward = backward;
         }
 
         public void ForceAdd(TK key, TV value) {
-            throw new System.NotImplementedException();
-        }
-
-
-
-
-    }
-
-    internal class AbstractBiDict<TK, TV> : IBiDictionary<TK, TV> {
-        private readonly IDictionary<TK, TV> _forward;
-        private readonly IDictionary<TV, TK> _backward;
-        private const string ValueAlreadyMappedMessage = "Value is already mapped to a different key.";
-
-        public AbstractBiDict(IDictionary<TK, TV> forward, IDictionary<TV,TK> backward ) {
-            _forward = forward;
-            _backward = backward;
+            AddItem(key, value, true);
         }
 
         protected virtual bool AddItem(TK key, TV value, bool force) {
             if (!force && !AlreadyMapped(key, value)) {
                 return false;
             }
-            _forward.Add(key, value);
-            _backward.Add(value, key);
+            Forward.Add(key, value);
+            Backward.Add(value, key);
             return true;
         }
 
@@ -44,26 +53,23 @@ namespace ExtendedDataStructures.BiDictionary {
             if (!force && !AlreadyMapped(item.Key, item.Value)) {
                 return false;
             }
-            _forward.Add(item);
-            _backward.Add(new KeyValuePair<TV, TK>(item.Value, item.Key));
+            Forward.Add(item);
+            Backward.Add(new KeyValuePair<TV, TK>(item.Value, item.Key));
             return true;
         }
 
         private bool AlreadyMapped(TK key, TV value) {
             TK otherKey;
-            var mapped = _backward.TryGetValue(value, out otherKey);
-            if (mapped && !Equals(otherKey, key)) {
-                return false;
-            }
-            return true;
+            var mapped = Backward.TryGetValue(value, out otherKey);
+            return !mapped || Equals(otherKey, key);
         }
 
         public IEnumerator<KeyValuePair<TK, TV>> GetEnumerator() {
-            return _forward.GetEnumerator();
+            return Forward.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator() {
-            return ((IEnumerable) _forward).GetEnumerator();
+            return ((IEnumerable) Forward).GetEnumerator();
         }
 
         public void Add(KeyValuePair<TK, TV> item) {
@@ -75,33 +81,33 @@ namespace ExtendedDataStructures.BiDictionary {
         }
 
         public void Clear() {
-            _forward.Clear();
-            _backward.Clear();
+            Forward.Clear();
+            Backward.Clear();
         }
 
         public bool Contains(KeyValuePair<TK, TV> item) {
-            return _forward.Contains(item);
+            return Forward.Contains(item);
         }
 
         public void CopyTo(KeyValuePair<TK, TV>[] array, int arrayIndex) {
-            _forward.CopyTo(array, arrayIndex);
+            Forward.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(KeyValuePair<TK, TV> item) {
-            _backward.Remove(new KeyValuePair<TV, TK>(item.Value, item.Key));
-            return _forward.Remove(item);
+            Backward.Remove(new KeyValuePair<TV, TK>(item.Value, item.Key));
+            return Forward.Remove(item);
         }
 
         public int Count {
-            get { return _forward.Count; }
+            get { return Forward.Count; }
         }
 
         public bool IsReadOnly {
-            get { return _forward.IsReadOnly; }
+            get { return Forward.IsReadOnly; }
         }
 
         public bool ContainsKey(TK key) {
-            return _forward.ContainsKey(key);
+            return Forward.ContainsKey(key);
         }
 
         public void Add(TK key, TV value) {
@@ -114,29 +120,29 @@ namespace ExtendedDataStructures.BiDictionary {
 
         public bool Remove(TK key) {
             TV value;
-            var present = _forward.TryGetValue(key, out value);
+            var present = Forward.TryGetValue(key, out value);
             if (!present) {
                 return false;
             }
-            _backward.Remove(value);
-            return _forward.Remove(key);
+            Backward.Remove(value);
+            return Forward.Remove(key);
         }
 
         public bool TryGetValue(TK key, out TV value) {
-            return _forward.TryGetValue(key, out value);
+            return Forward.TryGetValue(key, out value);
         }
 
         public TV this[TK key] {
-            get { return _forward[key]; }
+            get { return Forward[key]; }
             set { Add(key, value); }
         }
 
         public ICollection<TK> Keys {
-            get { return _forward.Keys; }
+            get { return Forward.Keys; }
         }
 
         public ICollection<TV> Values {
-            get { return _forward.Values; }
+            get { return Forward.Values; }
         }
     }
 }

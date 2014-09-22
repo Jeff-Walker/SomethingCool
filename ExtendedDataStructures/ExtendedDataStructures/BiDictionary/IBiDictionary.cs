@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExtendedDataStructures.BiDictionary {
     public interface IBiDictionary<TK,TV> : IDictionary<TK,TV> {
-        IBiDictionary<TV, TK> Inverse();
+        IBiDictionary<TV, TK> Inverse { get; }
 
         /// <summary>
         ///  Adds an element with the provided key and value to the <see cref="IBiDictionary{TK,TV}"/>. 
