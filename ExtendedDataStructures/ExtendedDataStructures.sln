@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedDataStructures", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedDataStructuresTest", "ExtendedDataStructuresTest\ExtendedDataStructuresTest.csproj", "{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedDataStructuresSpecifications", "Specs\ExtendedDataStructuresSpecifications.csproj", "{38ADDCEE-E0A2-4C90-A841-B60AE514777F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38ADDCEE-E0A2-4C90-A841-B60AE514777F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38ADDCEE-E0A2-4C90-A841-B60AE514777F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38ADDCEE-E0A2-4C90-A841-B60AE514777F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38ADDCEE-E0A2-4C90-A841-B60AE514777F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
