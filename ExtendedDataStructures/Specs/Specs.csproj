@@ -7,8 +7,8 @@
     <ProjectGuid>{38ADDCEE-E0A2-4C90-A841-B60AE514777F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExtendedDataStructuresSpecifications</RootNamespace>
-    <AssemblyName>ExtendedDataStructuresSpecifications</AssemblyName>
+    <RootNamespace>Specs</RootNamespace>
+    <AssemblyName>Specs</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,9 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BiDictionary\CreatingABiDictionary.cs" />
+    <Compile Include="CreatingABiDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestValues.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

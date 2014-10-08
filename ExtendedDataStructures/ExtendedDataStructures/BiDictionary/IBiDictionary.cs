@@ -6,19 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ExtendedDataStructures.BiDictionary {
-    /// <summary>
-    /// A BiDictionary (or "bidirectional dictionary") is a Dictionary that preserves the 
-    /// uniquness between its values as well as its keys. This allow it to provide an inverse
-    /// view, which is another BiDictionary, but with values and keys reversed. Any changes to
-    /// the inverse "view" will happen to the original and vice a versa. It is the caller's 
-    /// responsibility to ensure both type parameters provide a proper hash code.
-    /// </summary>
-    /// <typeparam name="TK"></typeparam>
-    /// <typeparam name="TV"></typeparam>
     public interface IBiDictionary<TK,TV> : IDictionary<TK,TV> {
-        /// <summary>
-        /// Returns the inverse of this BiDictionary. It mapps the values to the keys.
-        /// </summary>
         IBiDictionary<TV, TK> Inverse { get; }
 
         /// <summary>
