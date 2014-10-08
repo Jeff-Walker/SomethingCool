@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ExtendedDataStructures.MultiDictionary {
+namespace ExtendedDataStructures {
     public class RegularDictionary {
         private readonly IDictionary<string, IEnumerable<int>> _dictionary;
 

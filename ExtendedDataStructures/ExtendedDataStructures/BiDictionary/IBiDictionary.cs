@@ -37,13 +37,5 @@ namespace ExtendedDataStructures.BiDictionary {
         /// <param name="key"></param>
         /// <param name="value"></param>
         void ForceAdd(TK key, TV value);
-
-        /// <summary>
-        /// Looks in the BiDictionary values to see if the value is there. Analogus to ContainsKey, but value lookup is cheap and useful.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns><code>true</code> if the value is in the dictionary</returns>
-        /// 
-        bool ContainsValue(TV value);
     }
 }
