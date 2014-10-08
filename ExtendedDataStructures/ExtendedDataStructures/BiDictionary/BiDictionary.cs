@@ -32,7 +32,7 @@ namespace ExtendedDataStructures.BiDictionary {
         }
     }
 
-    public abstract class AbstractBiDict<TK, TV> : IBiDictionary<TK, TV>, IReadOnlyDictionary<TK, TV> {
+    public abstract class AbstractBiDict<TK, TV> : IBiDictionary<TK, TV> {
         protected readonly IDictionary<TK, TV> Forward;
         protected readonly IDictionary<TV, TK> Backward;
         private const string ValueAlreadyMappedMessage = "Value is already mapped to a different key.";
@@ -90,7 +90,6 @@ namespace ExtendedDataStructures.BiDictionary {
 
         public void Add(KeyValuePair<TK, TV> item) {
             var added = AddItem(item, false);
-//            var added = AddItem(item.Key, item.Value, false);
             if (!added) {
                 throw new ArgumentException(ValueAlreadyMappedMessage);
             }
@@ -156,14 +155,6 @@ namespace ExtendedDataStructures.BiDictionary {
             set { Add(key, value); }
         }
 
-        IEnumerable<TK> IReadOnlyDictionary<TK, TV>.Keys {
-            get { return Keys; }
-        }
-
-        IEnumerable<TV> IReadOnlyDictionary<TK, TV>.Values {
-            get { return Values; }
-        }
-
         public ICollection<TK> Keys {
             get { return Forward.Keys; }
         }
@@ -172,16 +163,5 @@ namespace ExtendedDataStructures.BiDictionary {
             get { return Forward.Values; }
         }
 
-        bool IReadOnlyDictionary<TK, TV>.ContainsKey(TK key) {
-            return ContainsKey(key);
-        }
-
-        bool IReadOnlyDictionary<TK, TV>.TryGetValue(TK key, out TV value) {
-            return TryGetValue(key, out value);
-        }
-
-        TV IReadOnlyDictionary<TK, TV>.this[TK key] {
-            get { return this[key]; }
-        }
     }
 }

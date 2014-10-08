@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Collections;
 
-namespace ExtendedDataStructures {
+namespace ExtendedDataStructures.MultiDictionary {
     //     ReSharper disable once PossibleInterfaceMemberAmbiguity
     public interface IMultiDictionary<TK, TV> : IDictionary<TK, ICollection<TV>>, ILookup<TK, TV> {
         bool TryGetValue(TK key, out IEnumerable<TV> value);

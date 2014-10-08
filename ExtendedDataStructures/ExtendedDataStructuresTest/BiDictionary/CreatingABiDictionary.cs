@@ -26,6 +26,15 @@ namespace ExtendedDataStructuresTest.BiDictionary {
 
         It inverse_of_inverse_should_be_same_as_original =
                 () => sut.Inverse.Inverse.ShouldBeTheSameAs(sut);
+        It should_return_true_for_containskey_for_key_of_first_mapping =
+                () => sut.ContainsKey(Ints[0]).ShouldBeTrue();
+        It should_return_true_for_containskey_for_key_of_second_mapping =
+                () => sut.ContainsKey(Ints[1]).ShouldBeTrue();
+
+        It should_return_true_for_containsvalue_for_value_of_first_mapping =
+                () => sut.ContainsValue(Strings[0]).ShouldBeTrue();
+        It should_return_true_for_containsvalue_for_value_of_second_mapping =
+                () => sut.ContainsValue(Strings[1]).ShouldBeTrue();
     }
 
     [Subject(typeof (BiDictionary<int, string>))]
