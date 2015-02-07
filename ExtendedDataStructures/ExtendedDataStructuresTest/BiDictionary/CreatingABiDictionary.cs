@@ -5,7 +5,7 @@ using Machine.Specifications;
 namespace ExtendedDataStructuresTest.BiDictionary {
     [Subject(typeof(BiDictionary<int,string>))]
     public class CreatingABiDictionary : TestValues {
-        private static IBiDictionary<int, string> sut;
+        private static IBiDictionary<int, string> sut; 
 
         Establish context = () => {  };
         Because of = () => {

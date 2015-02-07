@@ -60,6 +60,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BiDictionary\CreatingABiDictionary.cs" />
+    <Compile Include="ChunkedArrayList\Test.cs" />
     <Compile Include="TestValues.cs" />
     <Compile Include="MultiListDict\DictionaryTest.cs" />
     <Compile Include="MultiListDict\GeneralTests.cs" />
