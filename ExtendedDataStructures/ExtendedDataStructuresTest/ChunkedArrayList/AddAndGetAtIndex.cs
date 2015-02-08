@@ -1,5 +1,4 @@
-﻿using System;
-using ExtendedDataStructures.ChunkedArrayList;
+﻿using ExtendedDataStructures.ChunkedArrayList;
 using Machine.Specifications;
 
 namespace ExtendedDataStructuresTest.ChunkedArrayList {
