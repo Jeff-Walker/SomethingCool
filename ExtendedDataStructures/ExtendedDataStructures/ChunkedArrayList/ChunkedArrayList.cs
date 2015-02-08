@@ -60,7 +60,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         public T this[int index] {
             get {
                 if (InRange(index)) {
-                    return _members[CurrentSize];
+                    return _members[index];
                 }
                 if (_nextChunk != null) {
                     return _nextChunk[index];
