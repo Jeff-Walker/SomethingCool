@@ -47,7 +47,8 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         public void Add(T t) {
             _version++;
             if (CanTake(1) && _nextChunk == null) {
-                _members[_end++] = t;
+                _members[CurrentSize] = t;
+                _end++;
             }
             else {
                 if (_nextChunk == null) {
@@ -57,10 +58,13 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             }
         }
 
+        int TranslateIndex(int logicalIndex) {
+            return logicalIndex - _start;
+        }
         public T this[int index] {
             get {
                 if (InRange(index)) {
-                    return _members[index];
+                    return _members[TranslateIndex(index)];
                 }
                 if (_nextChunk != null) {
                     return _nextChunk[index];
@@ -70,7 +74,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             set {
                 _version++;
                 if (InRange(index)) {
-                    _members[index] = value;
+                    _members[TranslateIndex(index)] = value;
                 }
                 else if (_nextChunk != null) {
                     _nextChunk[index] = value;
@@ -88,7 +92,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         }
 
         public int IndexOf(T item) {
-            int index = Array.IndexOf(_members, item);
+            var index = Array.IndexOf(_members, item);
             if (index < 0 && _nextChunk != null) {
                 return _nextChunk.IndexOf(item);
             }
@@ -173,7 +177,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         }
 
         private bool CanTake(int i) {
-            return _members.Length > (CurrentSize) + i;
+            return _members.Length >= (CurrentSize) + i;
         }
 
         private bool InRange(int i) {
