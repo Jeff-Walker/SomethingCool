@@ -117,7 +117,9 @@ namespace ExtendedDataStructures.ChunkedArrayList {
                     throw new IndexOutOfRangeException(String.Format("Can't insert at {0}", index));
                 }
             } else if ( CanTake(1) ) {
-                // insert into _members
+                Array.Copy(_members, index, _members, index+1, CurrentSize - index );
+                _members[index] = item;
+                _end++;
             } else {
                 SplitAt(index);
                 Add(item);
