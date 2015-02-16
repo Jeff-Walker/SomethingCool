@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8C0CAED5-EF86-4FF2-815D-650F4A0267AE}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{ED3AF60A-C730-4E5C-A365-7DB6071A225A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExtendedDataStructures</RootNamespace>
-    <AssemblyName>ExtendedDataStructures</AssemblyName>
+    <RootNamespace>ConsoleApplication1</RootNamespace>
+    <AssemblyName>ConsoleApplication1</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,17 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BiDictionary\BiDictionary.cs" />
-    <Compile Include="BiDictionary\IBiDictionary.cs" />
-    <Compile Include="ChunkedArrayList\ChunkedArrayList.cs" />
-    <Compile Include="MultiDictionary\Flexible\FlexiMultiDictionary.cs" />
-    <Compile Include="MultiDictionary\Flexible\Implementations.cs" />
-    <Compile Include="MultiDictionary\MultiDictionary.cs" />
-    <Compile Include="MultiDictionary\RegularDictionary.cs" />
-    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExtendedDataStructuresTest\ExtendedDataStructuresTest.csproj">
+      <Project>{e4b5155d-5cb7-4b98-bed8-1d0f3c2b7edc}</Project>
+      <Name>ExtendedDataStructuresTest</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ExtendedDataStructures\ExtendedDataStructures.csproj">
+      <Project>{8c0caed5-ef86-4ff2-815d-650f4a0267ae}</Project>
+      <Name>ExtendedDataStructures</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

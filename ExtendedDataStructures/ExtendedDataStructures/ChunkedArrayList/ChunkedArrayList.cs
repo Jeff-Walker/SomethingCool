@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using ExtendedDataStructures.Annotations;
 
 namespace ExtendedDataStructures.ChunkedArrayList {
     public class ChunkedArrayList<T> : IList<T> {
@@ -13,6 +16,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         int _start;
         volatile int _version;
 
+
         ChunkedArrayList(int start, int chunkSize) {
             _start = start;
             _chunkSize = chunkSize;
@@ -21,7 +25,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             _end = start;
         }
 
-        ChunkedArrayList(ChunkedArrayList<T> copyMe) {
+        ChunkedArrayList([NotNull] ChunkedArrayList<T> copyMe) {
             _chunkSize = copyMe._chunkSize;
             _members = copyMe._members;
             _nextChunk = copyMe._nextChunk;
@@ -57,14 +61,16 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             }
         }
 
-        int TranslateIndex(int logicalIndex) {
+        int PhysicalIndex(int logicalIndex) {
             return logicalIndex - _start;
         }
 
+
         public T this[int index] {
             get {
+                var translatedIndex = PhysicalIndex(index);
                 if (InRange(index)) {
-                    return _members[TranslateIndex(index)];
+                    return _members[translatedIndex];
                 }
                 if (_nextChunk != null) {
                     return _nextChunk[index];
@@ -74,7 +80,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             set {
                 _version++;
                 if (InRange(index)) {
-                    _members[TranslateIndex(index)] = value;
+                    _members[PhysicalIndex(index)] = value;
                 } else if (_nextChunk != null) {
                     _nextChunk[index] = value;
                 } else {
@@ -99,42 +105,109 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             return index;
         }
 
+//        public void _Insert(int index, T item) {
+//            _version++;
+//            if (index == 0) {
+//                // inserting in front, this is a special case
+//                
+//            } else if (ShouldGoHere(index)) {//InRange(index) && CanTake(1)) {
+//                
+//            } else if (_nextChunk != null && index >= _nextChunk._start) {
+////!InRange(index)) {
+//                // some other chunk controls that
+//                _nextChunk.Insert(index, item);
+////                if (_nextChunk != null && index > _end) {
+////                    _nextChunk.Insert(index, item);
+////                } else {
+////                    throw new IndexOutOfRangeException(String.Format("Can't insert at {0}", index));
+////                }
+//            } else {
+//                SplitAt(PhysicalIndex(index));
+////                Add(item);
+//                _members[PhysicalIndex(index)] = item;
+//                _end++;
+//                _nextChunk.ShiftIndexBy(1);
+//            }
+//        }
+
         public void Insert(int index, T item) {
+            var b = TryToInsertInFront(index, item)
+                    || TryToTakeIt(index, item)
+                    || TryToPassIt(index, item)
+                    || Fail(index);
             _version++;
-            if (index == 0) {
-                // inserting in front, this is a special case
-                _nextChunk = new ChunkedArrayList<T>(this);
-                _start = 0;
-                _end = 1;
+        }
+
+        bool Fail(int index) {
+            throw new IndexOutOfRangeException(String.Format("Can't insert at {0}", index));
+        }
+
+        bool TryToPassIt(int index, T item) {
+            if (_nextChunk != null) {
+                _nextChunk.Insert(index, item);
+                return true;
+            }
+            return false;
+        }
+
+        bool TryToInsertInFront(int index, T item) {
+            if (index == _start && !CanTake(1)) {
+                var newNext = new ChunkedArrayList<T>(this);
+
+                _nextChunk = newNext;
+                _end = _start + 1;
                 _members[0] = item;
                 _nextChunk.ShiftIndexBy(1);
-            } else if (_nextChunk != null && index >= _nextChunk._start) {
-//!InRange(index)) {
-                // some other chunk controls that
-                if (_nextChunk != null && index > _end) {
-                    _nextChunk.Insert(index, item);
-                } else {
-                    throw new IndexOutOfRangeException(String.Format("Can't insert at {0}", index));
-                }
-            } else if ( CanTake(1) ) {
-                Array.Copy(_members, index, _members, index+1, CurrentSize - index );
-                _members[index] = item;
-                _end++;
-            } else {
-                SplitAt(index);
-                Add(item);
+                return true;
             }
+            return false;
+        }
+
+        bool TryToTakeIt(int index, T item) {
+            if (index >= _start && index < PhysicalEnd) {
+                if (CanTake(1) && index != PhysicalEnd) {
+                    Array.Copy(_members, PhysicalIndex(index), _members, PhysicalIndex(index) + 1, CurrentSize - PhysicalIndex(index));
+                } else {
+                    SplitAt(PhysicalIndex(index));
+                }
+                _members[PhysicalIndex(index)] = item;
+                _end++;
+                if (_nextChunk != null) {
+                    _nextChunk.ShiftIndexBy(1);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        int PhysicalEnd {
+            get { return _start + _chunkSize; }
         }
 
         void SplitAt(int index) {
             var newNext = new ChunkedArrayList<T>(_chunkSize);
-            Array.Copy(_members, index + 1, newNext._members, 0, _end - index + 1);
-            newNext._start = index + 1;
+            Array.Copy(_members, index, newNext._members, 0, CurrentSize - index );
+            newNext._start = index;
             newNext._end = _end;
             newNext._nextChunk = _nextChunk;
 
             _nextChunk = newNext;
             _end = index;
+        }
+
+        [NotNull,UsedImplicitly]
+        public StringBuilder DebugToString() {
+            var b = new StringBuilder();
+
+            b.AppendFormat("[{0}-{1}<", _start, _end - 1);
+            for (var i = 0 ; i < CurrentSize ; i++) {
+                b.Append("'" + _members[i] + "',");
+            }
+            b.Append(">];");
+            if (_nextChunk != null) {
+                b.Append(_nextChunk.DebugToString());
+            }
+            return b;
         }
 
         public void RemoveAt(int index) {
@@ -169,8 +242,10 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         }
 
         public int Count {
-            get { return _nextChunk == null ? _end : _nextChunk.Count; }
+            get { return CurrentSize + (_nextChunk == null ? 0 : _nextChunk.Count); }
+            //get { return _nextChunk == null ? _end : _nextChunk.Count; }
         }
+
 
 
         public bool IsReadOnly {
@@ -200,9 +275,12 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             TE _current;
             readonly int _version;
             bool _lastMove;
-            bool _isDesposed;
+            bool _isDisposed;
 
             public ChunkedEnumerator(ChunkedArrayList<TE> parent) {
+                if (parent == null) {
+                    throw new ArgumentNullException();
+                }
                 _parent = parent;
                 _memberEnumerator = _parent._members.GetEnumerator();
                 _version = _parent._version;
@@ -212,8 +290,8 @@ namespace ExtendedDataStructures.ChunkedArrayList {
                 if (_version != _parent._version) {
                     throw new InvalidOperationException("Invalid enumerator: Parent collection has changed");
                 }
-                if (_isDesposed) {
-                    throw new InvalidOperationException("Invalid enumerator: Is desposed");
+                if (_isDisposed) {
+                    throw new InvalidOperationException("Invalid enumerator: Is disposed");
                 }
             }
 
@@ -265,8 +343,61 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             }
 
             public void Dispose() {
-                _isDesposed = true;
+                _isDisposed = true;
             }
+        }
+
+
+        internal int ChunkSize { get { return _chunkSize; } }
+        internal int Start { get { return _start; } }
+        internal int End { get { return _end; } }
+        internal ChunkedArrayList<T> NextChunk { get { return _nextChunk; } }
+        internal T[] Members { get { return _members; } }
+    }
+
+    public class DisplayChunkedArrayList<T> {
+        readonly ChunkedArrayList<T> _chunk;
+
+        public DisplayChunkedArrayList(ChunkedArrayList<T> chunk) {
+            _chunk = chunk;
+        }
+
+        public string Display() {
+            var writer = new StringWriter();
+            Display(writer);
+            return writer.GetStringBuilder().ToString();
+            
+        }
+
+        public void Display(TextWriter writer) {
+            writer.WriteLine("ChunkedArrayList; chunk size {0}, count {1}", _chunk.ChunkSize, _chunk.Count);
+            var i = 0;
+            var currentChunk = _chunk;
+            do {
+                DisplayChunkInfo(i, currentChunk, writer);
+                i++;
+                currentChunk = currentChunk.NextChunk;
+            } while (currentChunk != null);
+        }
+
+        static void DisplayChunkInfo(int i, ChunkedArrayList<T> cc, TextWriter writer) {
+            writer.Write("-> {0}: {1}-{2}["//"{3}]"
+                , i, cc.Start, cc.End - 1
+//                , string.Join(",", cc.Members)
+                );
+            for (int l = 0 ; l < cc.ChunkSize ; l++) {
+                if (l != 0) {
+                    writer.Write(",");
+                }
+                string str;
+                var value = cc.Members[l];
+                str = value == null ? "" : value.ToString();
+                if (l >= cc.End - cc.Start) {
+                    str = "_" + str;
+                }
+                writer.Write(str);
+            }
+            writer.WriteLine("]");
         }
     }
 }

@@ -1,19 +1,49 @@
 using System;
 using System.Collections.Generic;
+using Machine.Specifications.Annotations;
 
 namespace ExtendedDataStructuresTest {
-    public class TestValues {
-        private static readonly Random Random = new Random();
-
-        private static readonly IValues<int> _ints = new BoundlessValues<int>(() => Random.Next());
-        private static readonly IValues<string> _strings = new BoundlessValues<string>(() => "" + Random.Next());
-
-        protected static IValues<string> Strings {
-            get { return _strings; }
+    public static class StringGenerator {
+//        static char _nextChar = 'a';
+        static int _nextInt = 0;
+        [NotNull]
+        public static string GenerateString() {
+//            return "" + TestValues.Random.Next();
+//            return new String(new []{_nextChar++});
+            return GetExcelStyleSequential(_nextInt++);
         }
 
+        [NotNull]
+        static String GetExcelStyleSequential(int column) {
+            var col = Convert.ToString((char) ('a' + (column % 26)));
+            while (column >= 26) {
+                column = (column / 26) - 1;
+                col = Convert.ToString((char) ('a' + (column % 26))) + col;
+            }
+            return col;
+        }
+    }
+    public static class IntGenerator {
+        static int _nextInt = 1;
+        public static int GenerateInt() {
+//            return TestValues.Random.Next();
+            return _nextInt++;
+        }
+    }
+    public class TestValues {
+        internal static readonly Random Random = new Random();
+        private static readonly IValues<int> _ints = new BoundlessValues<int>(IntGenerator.GenerateInt);
+
+        private static readonly IValues<string> _strings = new BoundlessValues<string>(StringGenerator.GenerateString);
+
+        [NotNull]
+        protected static IValues<string> Strings {
+            get { return TestValues._strings; }
+        }
+
+        [NotNull]
         protected static IValues<int> Ints {
-            get { return _ints; }
+            get { return TestValues._ints; }
         }
 
         protected static KeyValuePair<TK,TV> NewKvp<TK,TV>(TK key, TV value) {

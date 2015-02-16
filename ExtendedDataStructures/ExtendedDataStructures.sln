@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedDataStructures", "ExtendedDataStructures\ExtendedDataStructures.csproj", "{8C0CAED5-EF86-4FF2-815D-650F4A0267AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedDataStructuresTest", "ExtendedDataStructuresTest\ExtendedDataStructuresTest.csproj", "{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{ED3AF60A-C730-4E5C-A365-7DB6071A225A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4B5155D-5CB7-4B98-BED8-1D0F3C2B7EDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED3AF60A-C730-4E5C-A365-7DB6071A225A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED3AF60A-C730-4E5C-A365-7DB6071A225A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED3AF60A-C730-4E5C-A365-7DB6071A225A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED3AF60A-C730-4E5C-A365-7DB6071A225A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
