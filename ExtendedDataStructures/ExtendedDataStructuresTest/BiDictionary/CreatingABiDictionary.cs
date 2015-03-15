@@ -1,8 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using ExtendedDataStructures.BiDictionary;
 using Machine.Specifications;
 
 namespace ExtendedDataStructuresTest.BiDictionary {
+    public class TestValues : ExtendedDataStructuresTest.TestValues {
+        protected static KeyValuePair<TK, TV> NewKvp<TK, TV>(TK key, TV value) {
+            return new KeyValuePair<TK, TV>(key, value);
+        }
+    }
+
     [Subject(typeof(BiDictionary<int,string>))]
     public class CreatingABiDictionary : TestValues {
         private static IBiDictionary<int, string> sut; 

@@ -42,6 +42,7 @@
     <Compile Include="BiDictionary\BiDictionary.cs" />
     <Compile Include="BiDictionary\IBiDictionary.cs" />
     <Compile Include="ChunkedArrayList\ChunkedArrayList.cs" />
+    <Compile Include="ChunkedArrayList\ChunkingStrategy.cs" />
     <Compile Include="MultiDictionary\Flexible\FlexiMultiDictionary.cs" />
     <Compile Include="MultiDictionary\Flexible\Implementations.cs" />
     <Compile Include="MultiDictionary\MultiDictionary.cs" />

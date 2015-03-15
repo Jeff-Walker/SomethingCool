@@ -9,20 +9,16 @@ namespace ExtendedDataStructuresTest.ChunkedArrayList {
         Establish context = () => { };
 
         Because of = () => {
-            sut = new ChunkedArrayList<string> {
-                Strings[0],
-                Strings[1],
-                Strings[2]
-            };
+            sut = Maker.NewChunkedArrayList(
+                    Strings[0],
+                    Strings[1],
+                    Strings[2]);
         };
 
         It should_have_3_elements = () => sut.Count.ShouldEqual(3);
-//        It should_have_first_element_long = () => {
-//            var expected = Strings[0];
-//            var s = sut[0];
-//            s.ShouldEqual(expected);
-//        };
         It should_have_first_element = () => sut[0].ShouldEqual(Strings[0]);
+        It should_have_second_element = () => sut[1].ShouldEqual(Strings[1]);
+        It should_have_third_element = () => sut[2].ShouldEqual(Strings[2]);
     }
 
     [Subject(typeof (ChunkedArrayList<string>))]
@@ -31,15 +27,16 @@ namespace ExtendedDataStructuresTest.ChunkedArrayList {
 
         Establish context = () => {  };
         Because of = () => {
-            sut = new ChunkedArrayList<string>(5);
-            sut.Add(Strings[0]);
-            sut.Add(Strings[1]);
-            sut.Add(Strings[2]);
-            sut.Add(Strings[3]);
-            sut.Add(Strings[4]);
-            sut.Add(Strings[5]);
-            sut.Add(Strings[6]);
-            sut.Add(Strings[7]);
+            sut = new ChunkedArrayList<string>(5) {
+                Strings[0],
+                Strings[1],
+                Strings[2],
+                Strings[3],
+                Strings[4],
+                Strings[5],
+                Strings[6],
+                Strings[7]
+            };
         };
 
 

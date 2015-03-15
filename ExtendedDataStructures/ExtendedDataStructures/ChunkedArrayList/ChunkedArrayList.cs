@@ -9,28 +9,53 @@ using ExtendedDataStructures.Annotations;
 namespace ExtendedDataStructures.ChunkedArrayList {
     public class ChunkedArrayList<T> : IList<T> {
         const int DefaultChunkSize = 10;
+        const IChunkingStrategy DefaultChunkingStrategy = null;
         readonly int _chunkSize;
         readonly T[] _members;
         int _end; // logical ending index
-        ChunkedArrayList<T> _nextChunk;
         int _start;
-        volatile int _version;
+        ChunkedArrayList<T> _nextChunk;
 
-
-        ChunkedArrayList(int start, int chunkSize) {
+        readonly Accounting _accounting;
+            
+        ChunkedArrayList(int start, Accounting accounting) {
             _start = start;
-            _chunkSize = chunkSize;
+            _accounting = accounting;
 
-            _members = new T[chunkSize];
+            _chunkSize = _accounting.ChunkingStrategy.NextChunkSize();
+
+            _members = new T[_chunkSize];
             _end = start;
         }
 
+        class Accounting {
+            public Accounting(IChunkingStrategy chunkingStrategy) {
+                ChunkingStrategy = chunkingStrategy;
+            }
+
+            public IChunkingStrategy ChunkingStrategy { get; private set; }
+//            volatile int _version;
+            public int Version { get; private set; }
+            public void NextVersion() {
+                Version++;
+            }
+            public int Count { get; private set; }
+            public void Add(int count = 1) {
+                Count += count;
+            }
+
+            public void Remove(int count = 1) {
+                Count -= count;
+            }
+        }
+
         ChunkedArrayList([NotNull] ChunkedArrayList<T> copyMe) {
-            _chunkSize = copyMe._chunkSize;
             _members = copyMe._members;
             _nextChunk = copyMe._nextChunk;
             _end = copyMe._end;
             _start = copyMe._start;
+            _accounting = copyMe._accounting;
+            _chunkSize = _accounting.ChunkingStrategy.NextChunkSize();
         }
 
 //        private ChunkedArrayList(int chunkSize, T[] members, ChunkedArrayList<T> nextChunk, int end, int start) {
@@ -41,21 +66,26 @@ namespace ExtendedDataStructures.ChunkedArrayList {
 //            _start = start;
 //        }
 
-        public ChunkedArrayList(int chunkSize) : this(0, chunkSize) {}
-        public ChunkedArrayList() : this(0, DefaultChunkSize) {}
+        public ChunkedArrayList(int chunkSize) : this(0, new Accounting(new StaticChunkingStrategy(chunkSize))) {}
+        public ChunkedArrayList(int chunkSize, int extent) : this(0, new Accounting(new ExtendingChunkingStrategy(chunkSize, extent))) {}
+        public ChunkedArrayList() : this(0, new Accounting(new StaticChunkingStrategy(DefaultChunkSize))) { }
+        public ChunkedArrayList(IChunkingStrategy chunkingStrategy) : this(0, new Accounting(chunkingStrategy)) { }
+
 
         int CurrentSize {
             get { return _end - _start; }
         }
 
         public void Add(T t) {
-            _version++;
+//            _accounting.NextVersion();
             if (CanTake(1) && _nextChunk == null) {
                 _members[CurrentSize] = t;
                 _end++;
+                _accounting.Add();
+                _accounting.NextVersion();
             } else {
                 if (_nextChunk == null) {
-                    _nextChunk = new ChunkedArrayList<T>(_end, _chunkSize);
+                    _nextChunk = new ChunkedArrayList<T>(_end, _accounting);
                 }
                 _nextChunk.Add(t);
             }
@@ -78,8 +108,8 @@ namespace ExtendedDataStructures.ChunkedArrayList {
                 throw new IndexOutOfRangeException(String.Format("index {0}, max is {1}", index, _end));
             }
             set {
-                _version++;
                 if (InRange(index)) {
+                    _accounting.NextVersion();
                     _members[PhysicalIndex(index)] = value;
                 } else if (_nextChunk != null) {
                     _nextChunk[index] = value;
@@ -106,7 +136,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         }
 
 //        public void _Insert(int index, T item) {
-//            _version++;
+//            _accounting.NextVersion();
 //            if (index == 0) {
 //                // inserting in front, this is a special case
 //                
@@ -135,7 +165,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
                     || TryToTakeIt(index, item)
                     || TryToPassIt(index, item)
                     || Fail(index);
-            _version++;
+            _accounting.NextVersion();
         }
 
         bool Fail(int index) {
@@ -158,6 +188,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
                 _end = _start + 1;
                 _members[0] = item;
                 _nextChunk.ShiftIndexBy(1);
+                _accounting.Add();
                 return true;
             }
             return false;
@@ -172,6 +203,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
                 }
                 _members[PhysicalIndex(index)] = item;
                 _end++;
+                _accounting.Add();
                 if (_nextChunk != null) {
                     _nextChunk.ShiftIndexBy(1);
                 }
@@ -185,7 +217,7 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         }
 
         void SplitAt(int index) {
-            var newNext = new ChunkedArrayList<T>(_chunkSize);
+            var newNext = new ChunkedArrayList<T>(index, _accounting);
             Array.Copy(_members, index, newNext._members, 0, CurrentSize - index );
             newNext._start = index;
             newNext._end = _end;
@@ -195,10 +227,14 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             _end = index;
         }
 
-        [NotNull,UsedImplicitly]
         public StringBuilder DebugToString() {
             var b = new StringBuilder();
+            b.Append(Count);
+            DoDebugToString(b);
+            return b;
+        }
 
+        void DoDebugToString(StringBuilder b) {
             b.AppendFormat("[{0}-{1}<", _start, _end - 1);
             for (var i = 0 ; i < CurrentSize ; i++) {
                 b.Append("'" + _members[i] + "',");
@@ -207,16 +243,27 @@ namespace ExtendedDataStructures.ChunkedArrayList {
             if (_nextChunk != null) {
                 b.Append(_nextChunk.DebugToString());
             }
-            return b;
+            return;
         }
 
         public void RemoveAt(int index) {
-            _version++;
-            throw new NotImplementedException();
+            if (InRange(index)) {
+//                Array.Copy(_members, PhysicalIndex(index), _members, PhysicalIndex(index) + 1, CurrentSize - PhysicalIndex(index));
+                //
+                Array.Copy(_members, PhysicalIndex(index) + 1, _members, PhysicalIndex(index), CurrentSize - index);
+                _end--;
+                if ( _nextChunk!= null ){ShiftIndexBy(-1);}
+                _accounting.NextVersion();
+                _accounting.Remove();
+            } else if (_nextChunk != null) {
+                _nextChunk.RemoveAt(index);
+            } else {
+                throw new ArgumentOutOfRangeException("index", index, "out of range");
+            }
         }
 
         public void Clear() {
-            _version++;
+            _accounting.NextVersion(); 
             _end = _start;
             if (_nextChunk != null) {
                 _nextChunk.Clear();
@@ -228,21 +275,45 @@ namespace ExtendedDataStructures.ChunkedArrayList {
         }
 
         public void CopyTo(T[] array, int arrayIndex) {
-            throw new NotImplementedException();
+            if (array == null) {
+                throw new ArgumentNullException("array");
+            }
+            if (arrayIndex < 0) {
+                throw new ArgumentOutOfRangeException("arrayIndex");
+            }
+            if (array.Length + arrayIndex < Count) {
+                throw new ArgumentException("contents won't fit into array", "array");
+            }
+
+            DoCopyTo(array, arrayIndex);
+//            var arrayStart = arrayIndex;
+//            do {
+//                Array.Copy(_members, 0, array, arrayStart, CurrentSize);
+//                arrayStart += CurrentSize;
+//            }
         }
 
+        void DoCopyTo(T[] array, int arrayIndex) {
+            Array.Copy(_members, 0, array, arrayIndex, CurrentSize);
+            if (_nextChunk != null) {
+                _nextChunk.DoCopyTo(array, arrayIndex + CurrentSize);
+            }
+        }
+
+
         public bool Remove(T item) {
-            _version++;
             var index = IndexOf(item);
             if (index < 0) {
                 return false;
             }
             RemoveAt(index);
+            _accounting.NextVersion();
             return true;
         }
 
         public int Count {
-            get { return CurrentSize + (_nextChunk == null ? 0 : _nextChunk.Count); }
+            get { return _accounting.Count; }
+//            get { return CurrentSize + (_nextChunk == null ? 0 : _nextChunk.Count); }
             //get { return _nextChunk == null ? _end : _nextChunk.Count; }
         }
 
@@ -283,11 +354,11 @@ namespace ExtendedDataStructures.ChunkedArrayList {
                 }
                 _parent = parent;
                 _memberEnumerator = _parent._members.GetEnumerator();
-                _version = _parent._version;
+                _version = _parent._accounting.Version;
             }
 
             void CheckState() {
-                if (_version != _parent._version) {
+                if (_version != _parent._accounting.Version) {
                     throw new InvalidOperationException("Invalid enumerator: Parent collection has changed");
                 }
                 if (_isDisposed) {

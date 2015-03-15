@@ -63,10 +63,14 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BiDictionary\CreatingABiDictionary.cs" />
+    <Compile Include="ChunkedArrayList\Benchmarks\Benchmarks.cs" />
     <Compile Include="ChunkedArrayList\ChunkedEnumerator.cs" />
     <Compile Include="ChunkedArrayList\AddAndGetAtIndex.cs" />
+    <Compile Include="ChunkedArrayList\CopyTo.cs" />
     <Compile Include="ChunkedArrayList\Insert.cs" />
+    <Compile Include="ChunkedArrayList\Remove.cs" />
     <Compile Include="ChunkedArrayList\SetAtIndex.cs" />
+    <Compile Include="ChunkedArrayList\Maker.cs" />
     <Compile Include="TestValues.cs" />
     <Compile Include="MultiListDict\DictionaryTest.cs" />
     <Compile Include="MultiListDict\GeneralTests.cs" />

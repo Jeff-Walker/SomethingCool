@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
+using ExtendedDataStructuresTest.ChunkedArrayList;
 using Machine.Specifications.Annotations;
 
 namespace ExtendedDataStructuresTest {
-    public static class StringGenerator {
+    public class SequentialStringGenerator : IStringGenerator {
 //        static char _nextChar = 'a';
         static int _nextInt = 0;
         [NotNull]
-        public static string GenerateString() {
+        public string GenerateString() {
 //            return "" + TestValues.Random.Next();
 //            return new String(new []{_nextChar++});
             return GetExcelStyleSequential(_nextInt++);
@@ -23,32 +24,36 @@ namespace ExtendedDataStructuresTest {
             return col;
         }
     }
-    public static class IntGenerator {
+
+    public interface IIntGenerator {
+        int GenerateInt();
+    }
+
+    public interface IStringGenerator {
+        string GenerateString();
+    }
+    public class SequentialIntGenerator : IIntGenerator {
         static int _nextInt = 1;
-        public static int GenerateInt() {
+        public int GenerateInt() {
 //            return TestValues.Random.Next();
             return _nextInt++;
         }
     }
     public class TestValues {
-        internal static readonly Random Random = new Random();
-        private static readonly IValues<int> _ints = new BoundlessValues<int>(IntGenerator.GenerateInt);
-
-        private static readonly IValues<string> _strings = new BoundlessValues<string>(StringGenerator.GenerateString);
+        private static readonly IValues<int> _ints = new BoundlessValues<int>(new SequentialIntGenerator().GenerateInt);
+        private static readonly IValues<string> _strings = new BoundlessValues<string>(new SequentialStringGenerator().GenerateString);
 
         [NotNull]
-        protected static IValues<string> Strings {
+        public static IValues<string> Strings {
             get { return TestValues._strings; }
         }
 
         [NotNull]
-        protected static IValues<int> Ints {
+        public static IValues<int> Ints {
             get { return TestValues._ints; }
         }
 
-        protected static KeyValuePair<TK,TV> NewKvp<TK,TV>(TK key, TV value) {
-            return new KeyValuePair<TK,TV>(key, value);
-        }
+      
     }
 
 
@@ -56,7 +61,7 @@ namespace ExtendedDataStructuresTest {
         TValueType this[int i] { get; }
     }
 
-    internal class BoundlessValues<TValueType> : IValues<TValueType> {
+    public class BoundlessValues<TValueType> : IValues<TValueType> {
         private readonly Func<TValueType> _nextValue;
         private readonly IList<TValueType> _values = new List<TValueType>();
 
