@@ -77,17 +77,61 @@ namespace ExtendedDataStructuresTest.ChunkedArrayList {
             enumerator.Current.ShouldEqual(Strings[0]);
         };
 
+       
+
+        It should_throw_ioe_if_add_to_collection_in_other_chunk = () => {
+            enumerator = sut.GetEnumerator();
+        };
+
+        It should_stop_at_the_end_of_the_collection = () => {
+            enumerator = sut.GetEnumerator();
+            var i = 0;
+            while (enumerator.MoveNext()) {
+                enumerator.Current.ShouldEqual(Strings[i++]);
+            }
+            i.ShouldEqual(NumberOfElements);
+        };
+
+//        It should_be_ok_after_insert = () => {
+//            sut.Insert(2, "inserted");
+//            enumerator = sut.GetEnumerator();
+//        };
         It should_throw_ioe_if_Add_to_collection = () => {
             enumerator = sut.GetEnumerator();
             sut.Add("bad news");
 
-            Catch.Only<InvalidOperationException>(()=>enumerator.MoveNext())
+            Catch.Only<InvalidOperationException>(() => enumerator.MoveNext())
                 .ShouldBeOfExactType<InvalidOperationException>();
         };
-
-        It should_throw_ioe_if_add_to_collection_in_other_chunk = () => {
-            enumerator = sut.GetEnumerator();
-
-        };
     }
+
+    [Subject(typeof (ChunkedArrayList<string>))]
+    public class EnumeratorAfterInsert : TestValues {
+        const int NumberOfElements = 8;
+        static ChunkedArrayList<string> sut;
+        static IEnumerator<string> enumerator;
+
+        Establish context = () => {
+            sut = new ChunkedArrayList<string>(50);
+            for (var i = 0 ; i < NumberOfElements ; i++) {
+                sut.Add(Strings[i]);
+            }
+            sut.Insert(5, "inserted");
+        };
+
+        Because of = () => {  };
+        It should_enumerate_it_all = () =>
+            sut.ShouldEqual<IEnumerable<String>>(new[] {
+                Strings[0],
+                Strings[2],
+                Strings[3],
+                Strings[4],
+                "inserted",
+                Strings[5],
+                Strings[6],
+                Strings[7],
+            }
+        );
+    }
+
 }

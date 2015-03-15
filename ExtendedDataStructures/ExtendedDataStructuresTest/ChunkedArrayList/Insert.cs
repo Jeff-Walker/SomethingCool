@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using ExtendedDataStructures.ChunkedArrayList;
 using Machine.Specifications;
 
@@ -71,6 +73,43 @@ namespace ExtendedDataStructuresTest.ChunkedArrayList {
                 }
             }
         }
+    }
+
+    [Subject(typeof (ChunkedArrayList<string>))]
+    public class Insert_firstInserSplitsThenNextInsertInFirstChunk : TestValues {
+        static ChunkedArrayList<string> sut;
+        const int NumberOfElements = 6;
+        const int InsertPoint = 4;
+        const int InsertPointSecond = 2;
+        const string InsertMessage1 = "insert 1";
+        const string InsertMessage2 = "insert 2";
+
+        Establish context = () => {
+            sut = new ChunkedArrayList<string>(10);
+            for (var i = 0 ; i < NumberOfElements ; i++) {
+                sut.Add(Strings[i]);
+            }
+            sut.Insert(InsertPoint, InsertMessage1);
+        };
+
+        Because of = () => sut.Insert(InsertPointSecond, InsertMessage2);
+
+        It should_have_8_elements = () => sut.Count.ShouldEqual(NumberOfElements + 2);
+        // second insert moved it over 1:
+        It should_have_inserted_value_at_first_insert_point = () => sut[InsertPoint + 1].ShouldEqual(InsertMessage1);
+        It should_have_inserted_value_at_second_insert_point = () => sut[InsertPointSecond].ShouldEqual(InsertMessage2);
+//        It should_have_the_right_elements = () => {
+//            int sutIndex = 0, stringsIndex = 0;
+//            sut[sutIndex++].ShouldEqual(Strings[stringsIndex++]);
+//            sut[sutIndex++].ShouldEqual(Strings[stringsIndex++]);
+//            sut[sutIndex++].ShouldEqual(InsertMessage2);
+//            sut[sutIndex++].ShouldEqual(Strings[stringsIndex++]);
+//            sut[sutIndex++].seq
+//        };
+
+        It should_have_the_right_elements = () => sut.ShouldEqual<IEnumerable<string>>(new[] {
+            Strings[0], Strings[1], InsertMessage2, Strings[2], Strings[3], InsertMessage1, Strings[4], Strings[5]
+        });
     }
 
     [Subject(typeof (ChunkedArrayList<string>))]

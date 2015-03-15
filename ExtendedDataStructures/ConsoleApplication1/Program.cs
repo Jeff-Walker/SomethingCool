@@ -88,6 +88,8 @@ namespace ConsoleApplication1 {
             var list = MakeListAndPrepopulate(new StaticChunkingStrategy(20), new SequentialValues(), 20);
             
             list.Insert(4, -1);
+            list.Insert(3, -2);
+            list.Insert(15, -3);
         }
 
 
